@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 import numpy as np
 
-from data_legacy import record
+from src.data_legacy import record
 
 def analyze(set, nodes, kratio=.1, random_state=31, **mopts):
     '''epoch classification using the Support Vector Machine with K-Fold random data splits;
@@ -21,15 +21,15 @@ def analyze(set, nodes, kratio=.1, random_state=31, **mopts):
     cvs = cross_val_score(C, X, Y, cv=cv)
     return cvs
 
-def minimax_of(results):
-    '''minimax function of a list of numbers'''
+def maximin_of(results):
+    '''maximin function of a list of numbers'''
     return max(results)*(min(results)/np.average(results)) 
 
-def enlist(nodes, labels, results, symbol='<->', fx=minimax_of):
+def enlist(nodes, labels, results, symbol='<->', fx=maximin_of):
     '''returns summary of nodes, tags (format X<=>Y), results (cross validation scores) and a function of results for scoring connectivity change (minimax by default)'''
     return max(results)*(min(results)/np.average(results)) 
 
-def enlist(nodes, labels, results, symbol='<->', fx=minimax_of):
+def enlist(nodes, labels, results, symbol='<->', fx=maximin_of):
     tag = symbol.join([labels[n] for n in nodes])
     return (nodes, tag, results, fx(results))
 
