@@ -1,9 +1,9 @@
 # pylint: disable=no-self-argument, no-member, unused-variable
 
-from core import GhostSet, GSet, ClonableObject, COb, ComparableGhost, GEq, ReprGhost, GRe, struct
-from core import copy_by_val, copy, by_val, meta, isfx
-from core import set_repr_to as _set_repr_to
-from core import Record as rec
+from src.core import GhostSet, GSet, ClonableObject, COb, ComparableGhost, GEq, ReprGhost, GRe, struct
+from src.core import copy_by_val, copy, by_val, meta, isfx
+from src.core import set_repr_to as _set_repr_to
+from src.core import Record as rec
 this = rec
 
 import numpy as np

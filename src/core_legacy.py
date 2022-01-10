@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov  6 2017
-
-@author: ALe
-"""
 # pylint: disable=no-self-argument, no-member, unused-variable
 
 from inspect import isfunction, ismethod, isgeneratorfunction, isgenerator, isroutine

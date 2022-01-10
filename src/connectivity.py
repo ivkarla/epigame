@@ -2,11 +2,11 @@
 
 from numpy import correlate, average, array, angle, mean, sign, exp, zeros, abs, unwrap
 from numpy.linalg import norm
-from awc import error
+from src.awc import error
 from scipy.signal import coherence, hilbert, csd
 from matplotlib.mlab import cohere
 from itertools import combinations
-from data_legacy import butter_filter
+from src.data_legacy import butter_filter
 from sklearn.preprocessing import normalize
 
 def phaselock(signal1, signal2):

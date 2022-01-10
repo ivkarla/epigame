@@ -1,8 +1,8 @@
 # pylint: disable=no-self-argument, no-member
 
-from core import GhostSet, GSet, ReprGhost, GRe, meta, struct
-from data import np, stats, this, Table, tab
-from data import set_repr_to
+from src.core import GhostSet, GSet, ReprGhost, GRe, meta, struct
+from src.data import np, stats, this, Table, tab
+from src.data import set_repr_to
 import pyedflib as edf
 
 _DEBUG = ''

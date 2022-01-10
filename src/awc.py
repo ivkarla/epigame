@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Aug 31 20:19:17 2018
-
-@author: ALe
-"""
-
 # pylint: disable=no-self-argument, no-member, unused-variable
 
-from core_legacy import struct, meta, table, ni
+from src.core_legacy import struct, meta, table, ni
 from numpy import fromfile, unpackbits, packbits
-from data_legacy import zeros, average, record, create, binarize
+from src.data_legacy import zeros, average, record, create, binarize
 
 class bit:
     def __init__(my, size = 32): my.states = size

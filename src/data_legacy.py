@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov  6 2017
-
-@author: ALe
-"""
 # pylint: disable=no-self-argument, no-member, unused-variable
 
-from core_legacy import table, no, some, meta, ni, isiterable, class_of, default
+from src.core_legacy import table, no, some, meta, ni, isiterable, class_of, default
 
 from numpy import ndarray, resize, linspace, arange
 from numpy import min, max, average, median, std, floor
