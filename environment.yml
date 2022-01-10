@@ -1,0 +1,14 @@
+name: epigame
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip=21.3.1=pyhd8ed1ab_0
+  - python=3.7.1=h9460c21_1003
+  - python_abi=3.7=2_cp37m
+  - setuptools=60.5.0=py37h03978a9_0
+  - ucrt=10.0.20348.0=h57928b3_0
+  - vc=14.2=hb210afc_5
+  - vs2015_runtime=14.29.30037=h902a5da_5
+  - wheel=0.37.1=pyhd8ed1ab_0
+prefix: C:\Users\karla\Miniconda3\envs\epigame
