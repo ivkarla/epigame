@@ -2,21 +2,11 @@
 
 from src.eeg import EEG, SET, STEp, epoch, secs, ms, np, struct, preprocess
 from src.core import REc as rec
-from src.data_legacy import notch, dwindle, band, upsample
-from src.connectivity import connectivity_analysis, phaselock, phaselag, spectral_coherence, PEC, cross_correlation, PAC
+from src.connectivity import preprocess, connectivity_analysis, phaselock, phaselag, spectral_coherence, PEC, cross_correlation, PAC
 from src.game import analyze, enlist, check_until
 
 from itertools import combinations
 import os
-
-def preprocess(eeg, epoch, limit=500): 
-    '''returns resampled data (to limit value in Hz) filtered with notch'''
-    sampling, rse = limit, epoch
-    if eeg.fs == limit: rse = epoch
-    elif eeg.fs%limit != 0: rse = upsample(epoch, eeg.fs, limit) if eeg.fs<limit else dwindle(epoch, int(eeg.fs/limit)-1) 
-    else: rse = upsample(epoch, eeg.fs, limit) if eeg.fs<limit else dwindle(epoch, int(eeg.fs/limit)-2) 
-    nse = notch(rse, fs=sampling, order=2)
-    return nse
 
 source = "../data/SEEG/" 
 preprocessed = "../results/preprocessed/"
