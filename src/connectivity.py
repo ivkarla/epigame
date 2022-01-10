@@ -1,13 +1,18 @@
 # pylint: disable=no-self-argument, no-member
 
 from numpy import correlate, average, array, angle, mean, sign, exp, zeros, abs, unwrap
-from numpy.linalg import norm
 from src.awc import error
-from scipy.signal import coherence, hilbert, csd
-from matplotlib.mlab import cohere
-from itertools import combinations
-from src.data_legacy import butter_filter
-from sklearn.preprocessing import normalize
+from scipy.signal import hilbert, csd
+from src.data_legacy import butter_filter, notch, dwindle, upsample
+
+def preprocess(eeg, epoch, limit=500): 
+    '''returns resampled data (to limit value in Hz) filtered with notch'''
+    sampling, rse = limit, epoch
+    if eeg.fs == limit: rse = epoch
+    elif eeg.fs%limit != 0: rse = upsample(epoch, eeg.fs, limit) if eeg.fs<limit else dwindle(epoch, int(eeg.fs/limit)-1) 
+    else: rse = upsample(epoch, eeg.fs, limit) if eeg.fs<limit else dwindle(epoch, int(eeg.fs/limit)-2) 
+    nse = notch(rse, fs=sampling, order=2)
+    return nse
 
 def phaselock(signal1, signal2):
     '''phase locking value between signal1 and signal2;       
