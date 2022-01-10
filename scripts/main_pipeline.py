@@ -1,13 +1,12 @@
 # pylint: disable=no-self-argument, no-member
 
-from eeg import EEG, SET, STEp, epoch, secs, ms, np, struct, preprocess
-from core import REc as rec
-from data_legacy import notch, dwindle, band, upsample
-from connectivity import connectivity_analysis, phaselock, phaselag, spectral_coherence, PEC, cross_correlation, PAC
-from game import analyze, minimax_of, enlist, check_until
+from src.eeg import EEG, SET, STEp, epoch, secs, ms, np, struct, preprocess
+from src.core import REc as rec
+from src.data_legacy import notch, dwindle, band, upsample
+from src.connectivity import connectivity_analysis, phaselock, phaselag, spectral_coherence, PEC, cross_correlation, PAC
+from src.game import analyze, enlist, check_until
 
 from itertools import combinations
-from sys import setrecursionlimit
 import os
 
 def preprocess(eeg, epoch, limit=500): 
@@ -19,11 +18,12 @@ def preprocess(eeg, epoch, limit=500):
     nse = notch(rse, fs=sampling, order=2)
     return nse
 
-source = os.getcwd()+"/../data/raw/" 
-preprocessed = os.getcwd()+"/../data/preprocessed/"
-out = os.getcwd()+"/../data/results/"
+source = "../data/SEEG/" 
+preprocessed = "../results/preprocessed/"
+out = "../data/results/EN/"
 
 """INITIALIZATION: method and frequency band of choice"""  
+
 window = input("Time window:\n 1. Non-seizure (baseline)\n 2. Pre-seizure\n 3. Transition to seizure\n 4. Seizure\n Indicate a number: ")
 method_idx = input("Connectivity method:\n 1. PEC\n 2. Spectral Coherence\n 3. Phase Lock Value\n 4. Phase-Lag Index\n 5. Cross-correlation\n 6. Phase-amplitude coupling\n Indicate a number: ")
 ext = ""
@@ -51,9 +51,13 @@ items = 30
 retry_ratio = 0                   #at the beginning we thought to use a percentage of all found networks, but that leads to an exponential increase that prooves to be unmanageable
 max_netn = 10                     #max number of nodes per network (10 is to avoid too long processing times and also a statistical failure, if networks are too big they will ultimately cover all the explored area)
 
+
 """ANALYSIS PIPELINE"""  
+
 for subid in subjects:  
+    
     """LOADING DATA""" 
+
     print('processing {}'.format(subid), end='...')
     name = ''
     for filename in files:
@@ -62,7 +66,9 @@ for subid in subjects:
     print(subid, "\n sampling: ", eeg.fs)
     if eeg.fs == 512: limit = 512
     else: limit = 500
+
     """PREPROCESSING""" 
+
     SET(eeg, _as='N')
     SET(eeg, 'EEG inicio', 'S')
     SET(eeg, 'EEG fin', 'E', epoch.END)
@@ -115,6 +121,7 @@ for subid in subjects:
     elif not Bands: rec(result).save(preprocessed+"{}/".format(method_code[method_idx]+ext)+'.'.join(['-'.join([subid,window_code[window]]),'prep']))
 
     """ANALYSIS"""
+    
     '''load preprocessed data'''
     nid, nodes = list(range(len(eeg.axes.region))), list(eeg.axes.region) 
     nxn, base, ftype, rtype = combinations(nid, 2), [], '.prep', '.res'  
