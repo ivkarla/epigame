@@ -19,6 +19,7 @@ Open the Anaconda Prompt. Navigate to the epigame folder and set up the virtual 
 ```
 $ cd epigame
 $ conda create --name epigame --file environment.yml
+$ conda activate epigame
 ```
 
 ## Data preparation
