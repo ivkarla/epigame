@@ -1,1 +1,1 @@
-##Cross correlation in high γ band (70-150 Hz)
+## Cross correlation in high γ band (70-150 Hz)

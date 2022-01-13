@@ -1,1 +1,1 @@
-##Spectral coherence - real part in θ band (4-8 Hz)
+## Spectral coherence - real part in θ band (4-8 Hz)

@@ -1,1 +1,1 @@
-##Spectral coherence - imaginary part in 𝛿 band (1-4 Hz)
+## Spectral coherence - imaginary part in 𝛿 band (1-4 Hz)

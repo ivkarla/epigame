@@ -1,1 +1,1 @@
-##Phase lag index in α band (8-12 Hz)
+## Phase lag index in α band (8-12 Hz)

@@ -1,1 +1,1 @@
-##Spectral coherence - real part in low γ band (30-70 Hz)
+## Spectral coherence - real part in low γ band (30-70 Hz)

@@ -1,1 +1,1 @@
-##Phase locking value in high γ band (70-150 Hz)
+## Phase locking value in high γ band (70-150 Hz)

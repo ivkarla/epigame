@@ -1,1 +1,1 @@
-##Phase-amplitude coupling between two nodes.
+## Phase-amplitude coupling between two nodes.

@@ -1,1 +1,1 @@
-##Spectral coherence - imaginary part in low γ band (30-70 Hz)
+## Spectral coherence - imaginary part in low γ band (30-70 Hz)

@@ -1,1 +1,1 @@
-##Spectral coherence - imaginary part in β band (13-30 Hz)
+## Spectral coherence - imaginary part in β band (13-30 Hz)

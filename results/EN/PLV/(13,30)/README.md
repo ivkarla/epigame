@@ -1,1 +1,1 @@
-##Phase locking value in β band (13-30 Hz)
+## Phase locking value in β band (13-30 Hz)
