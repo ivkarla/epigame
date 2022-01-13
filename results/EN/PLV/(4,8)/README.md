@@ -1,1 +1,1 @@
-##Phase locking value in θ band (4-8 Hz)
+## Phase locking value in θ band (4-8 Hz)

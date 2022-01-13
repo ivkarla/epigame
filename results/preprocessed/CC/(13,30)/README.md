@@ -1,1 +1,1 @@
-##Cross correlation in β band (13-30 Hz)
+## Cross correlation in β band (13-30 Hz)

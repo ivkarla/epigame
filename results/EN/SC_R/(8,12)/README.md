@@ -1,1 +1,1 @@
-##Spectral coherence - real part in α band (8-12 Hz)
+## Spectral coherence - real part in α band (8-12 Hz)

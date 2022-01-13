@@ -1,1 +1,1 @@
-##Phase lag index in high γ band (70-150 Hz)
+## Phase lag index in high γ band (70-150 Hz)

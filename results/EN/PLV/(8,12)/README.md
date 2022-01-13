@@ -1,1 +1,1 @@
-##Phase locking value in α band (8-12 Hz)
+## Phase locking value in α band (8-12 Hz)

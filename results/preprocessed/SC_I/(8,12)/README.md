@@ -1,1 +1,1 @@
-##Spectral coherence - imaginary part in α band (8-12 Hz)
+## Spectral coherence - imaginary part in α band (8-12 Hz)

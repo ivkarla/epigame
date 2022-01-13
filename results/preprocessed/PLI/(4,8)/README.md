@@ -1,1 +1,1 @@
-##Phase lag index in θ band (4-8 Hz)
+## Phase lag index in θ band (4-8 Hz)

@@ -1,1 +1,1 @@
-##Cross correlation in 𝛿 band (1-4 Hz)
+## Cross correlation in 𝛿 band (1-4 Hz)

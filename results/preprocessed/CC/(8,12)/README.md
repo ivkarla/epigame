@@ -1,1 +1,1 @@
-##Cross correlation in α band (8-12 Hz)
+## Cross correlation in α band (8-12 Hz)
