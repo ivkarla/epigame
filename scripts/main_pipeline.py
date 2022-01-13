@@ -8,7 +8,7 @@ from src.game import analyze, enlist, check_until
 from itertools import combinations
 import os
 
-source = "../data/SEEG/" 
+source = "../data/" 
 preprocessed = "../results/preprocessed/"
 out = "../data/results/EN/"
 
@@ -30,7 +30,7 @@ elif bands=="Y":
     bands = (mn,mx)
 dict_methods = {'1':PEC, '2':spectral_coherence, '3':phaselock, '4':phaselag, '5':cross_correlation, '6':PAC}
 method_code = {'1':"PEC", '2':"SC_", '3':"PLV", '4':"PLI", '5':"CC", '6':"PAC"}   
-window_code = {'1':"baseline", '2':"pre", '3':"transition", '4':"seizure"}
+window_code = {'1':"baseline", '2':"preseizure", '3':"transition", '4':"seizure"}
 files = list(os.listdir(source))
 subjects = [fname[0:3] for fname in files]
 limit = 500
