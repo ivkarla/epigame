@@ -2,6 +2,7 @@
 
 from src.eeg import EEG, SET, STEp, epoch, secs, ms, np, struct, preprocess
 from src.core import REc as rec
+from src.data_legacy import band
 from src.connectivity import preprocess, connectivity_analysis, phaselock, phaselag, spectral_coherence, PEC, cross_correlation, PAC
 from src.game import analyze, enlist, check_until
 
