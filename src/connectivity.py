@@ -6,7 +6,16 @@ from scipy.signal import hilbert, csd
 from src.data_legacy import butter_filter, notch, dwindle, upsample
 
 def preprocess(eeg, epoch, limit=500): 
-    '''returns resampled data (to limit value in Hz) filtered with notch'''
+    """Primary preprocessing. Resamples data to a limit frequency and applies a notch filter.
+
+    Args:
+        eeg (eeg): Wrapper object of the raw EEG data and metadata.
+        epoch (list): Signal epoch.
+        limit (int): Target frequency for resampling. Defaults to 500.
+
+    Returns:
+        list: Preprocessed epoch.
+    """
     sampling, rse = limit, epoch
     if eeg.fs == limit: rse = epoch
     elif eeg.fs%limit != 0: rse = upsample(epoch, eeg.fs, limit) if eeg.fs<limit else dwindle(epoch, int(eeg.fs/limit)-1) 
@@ -15,8 +24,15 @@ def preprocess(eeg, epoch, limit=500):
     return nse
 
 def phaselock(signal1, signal2):
-    '''phase locking value between signal1 and signal2;       
-       NOTE: signals must be bandpass filtered'''
+    """Computes the phase locking value between two notch-filtered signals.
+    
+    Args:
+        signal1 (array): Timecourse recorded from a first node.
+        signal2 (array): Timecourse recorded from a second node.
+
+    Returns:
+        float: Phase locking value.
+    """
     sig1_hil = hilbert(signal1)                          
     sig2_hil = hilbert(signal2)
     phase1 = angle(sig1_hil)                           
@@ -26,7 +42,15 @@ def phaselock(signal1, signal2):
     return plv
 
 def phaselag(signal1, signal2):
-    '''phase lag index between signal1 and signal2'''
+    """Computes the phase lag index between two signals.
+    
+    Args:
+        signal1 (array): Timecourse recorded from a first node.
+        signal2 (array): Timecourse recorded from a second node.
+
+    Returns:
+        float: Phase lag index.
+    """
     sig1_hil = hilbert(signal1)                 
     sig2_hil = hilbert(signal2)
     phase1 = angle(sig1_hil)                 
@@ -36,8 +60,17 @@ def phaselag(signal1, signal2):
     return pli
 
 def spectral_coherence(signal1, signal2, fs, imag=False):
-    '''spectral coherence between signal1 and signal2;
-    returns the real part of the complex value when imag is False, otherwise returns the imaginary part'''
+    """Computes the spectral coherence between two signals.
+
+    Args:
+        signal1 (array): Timecourse recorded from a first node.
+        signal2 (array): Timecourse recorded from a second node.
+        fs (int): Sampling frequency.
+        imag (bool): If True, computed the imaginary part of spectral coherence, if False computes the real part. Defaults to False.
+
+    Returns:
+        float: Spectral coherence.
+    """
     Pxy = csd(signal1,signal2,fs=fs, scaling='spectrum')[1] 
     Pxx = csd(signal1,signal1,fs=fs, scaling='spectrum')[1]
     Pyy = csd(signal2,signal2,fs=fs, scaling='spectrum')[1]
@@ -45,13 +78,28 @@ def spectral_coherence(signal1, signal2, fs, imag=False):
     elif not imag: return average(abs(Pxy)**2/(Pxx*Pyy))
 
 def cross_correlation(signal1, signal2):
-    '''cross correlation between signal1 and signal2'''                                                
+    """Computes the cross correlation between two signals.
+    
+    Args:
+        signal1 (array): Timecourse recorded from a first node.
+        signal2 (array): Timecourse recorded from a second node.
+
+    Returns:
+        float: Cross correlation.
+    """
     return correlate(signal1, signal2, mode="valid")
 
 def PAC(signal1, signal2, fs):
-    '''low frequency phase-high frequency amplitude phase coupling between signal1 and signal2;
-    low frequency = delta (1-4Hz)
-    high frequency = low gamma (30-70Hz)'''   
+    """Computes low frequency phase-high frequency amplitude phase coupling between two signals.
+    Low frequency = 1-4 Hz; High frequency = 30-70 Hz
+    Args:
+        signal1 (array): Timecourse recorded from a first node.
+        signal2 (array): Timecourse recorded from a second node.
+        fs (int): Sampling frequency.
+
+    Returns:
+        float: Phase-amplitude coupling.
+    """   
     low = butter_filter(signal1,1,4,fs) 
     high = butter_filter(signal2,30,70,fs) 
     low_hil = hilbert(low)
@@ -63,8 +111,16 @@ def PAC(signal1, signal2, fs):
     return plv
 
 def connectivity_analysis(epochs, method, dtail=False, **opts):
-    '''returns a connectivity matrix N×N (N - number of nodes), using a method for each node pair;
-    return a triangular matrix when dtail is False, otherwise return a regular matrix'''
+    """Computes a connectivity matrix N×N (N - number of nodes) per epoch, containing connectivity method measures for all node pairs.
+
+    Args:
+        epochs (list): List of preprocessed epochs (resampled, filtered and notched).
+        method (function): Connectivity method.
+        dtail (bool): If True, computes a square matrix; if False, computes a tringular matrix. Defaults to False.
+        opts (optional): method-specific arguments.
+    Returns:
+        list: List of connectivity matrices for all epochs.
+    """
     print('Connectivity Analysis: '+str(method).split()[1])
     result = [] 
     for i,e in enumerate(epochs):    
@@ -82,8 +138,15 @@ def connectivity_analysis(epochs, method, dtail=False, **opts):
     return result
 
 def PEC(nse, n):
-    '''prediction error connectivity;
-    returns a connectivity matrix N×N (N-number of nodes)'''
+    """Computes prediction error connectivity.
+
+    Args:
+        nse (list): Preprocessed epoch (resampled and notched).
+        n (int): Epoch index.
+
+    Returns:
+        array: Connectivity matrix.
+    """
     print('{}: '.format(n), end='')
     return array(error(nse, 2)[1])
     

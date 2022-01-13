@@ -10,9 +10,19 @@ import numpy as np
 from src.data_legacy import record
 
 def analyze(set, nodes, kratio=.1, random_state=31, **mopts):
-    '''epoch classification using the Support Vector Machine with K-Fold random data splits;
-    number of folds k is set as kratio of the number of epochs;
-    returns a list of k cross-validation scores'''
+    """Quantifies connectivity change of specified nodes.
+    Classifies time frame epochs using the connectivity measures as features. 
+    K-fold cross validation scores measure the connectivity change.
+
+    Args:
+        set (core.rec): Preprocessed data - connectivity matrices per epoch.
+        nodes (set): Nodes for which connectivity change is quantified. 
+        kratio (float): Ratio of epochs considered in a fold. Defaults to 0.1, which is ~10s of data if epoch span is 1s.
+        random_state (int): KFold argument; Controls the randomness of each fold. Defaults to 31.
+
+    Returns:
+        ndarray of float: Array of scores for each fold.
+    """
     X, Y = np.array([np.array((record(x).include(*nodes).T).include(*nodes)).flatten() for x in set.X]), set.y
     model, scaler, k = SVC, StandardScaler, int(round(len(Y)*kratio))
     if random_state == None: random_state = np.random.randint(0xFFFFFFFF)
@@ -22,20 +32,50 @@ def analyze(set, nodes, kratio=.1, random_state=31, **mopts):
     return cvs
 
 def maximin_of(results):
-    '''maximin function of a list of numbers'''
+    """Computes the maximin of an array of numbers.
+
+    Args:
+        results (ndarray): Cross validation score array.
+
+    Returns:
+        float: Maximin of results.
+    """
     return max(results)*(min(results)/np.average(results)) 
 
 def enlist(nodes, labels, results, symbol='<->', fx=maximin_of):
-    '''returns summary of nodes, tags (format X<=>Y), results (cross validation scores) and a function of results for scoring connectivity change (minimax by default)'''
-    return max(results)*(min(results)/np.average(results)) 
+    """Service function. 
+    Creates sets with node indices, labels, cross validation scores and a reference function of the scores.
 
-def enlist(nodes, labels, results, symbol='<->', fx=maximin_of):
+    Args:
+        nodes ([type]): [description]
+        labels ([type]): [description]
+        results (ndarray): Cross validation score array.
+        symbol (str): Symbol used to connect node labels within a network. Defaults to '<->'.
+        fx (function): Function of cross validation scores used to rank the networks based on their connectivity change. Defaults to maximin_of.
+
+    Returns:
+        set: A set of all the arguments.
+    """
     tag = symbol.join([labels[n] for n in nodes])
     return (nodes, tag, results, fx(results))
 
 def check_until(net, set=1, fall=0, at=-1):
-    '''adds up node groups until the average group score decreases;
-    returns head (node indices) and set (copy of the base)'''
+    """This function takes a list of analyzed node combinations sorted by their maximin score.
+    The function defines an index of the list until which the node combinations are considered epileptogenic.
+
+    Node combination are iterated and the average maximin score for each combination is computed. 
+    The score is used as a threshold, above which epileptogenic nodes are selected.
+    When the score decreases the iteration stops.
+
+    Args:
+        net (list): A list of sets returned by enlist().
+        set (int): Defaults to 1.
+        fall (int): Defaults to 0.
+        at (int): Defaults to -1.
+
+    Returns:
+        int: Index of net list.
+    """
     while set < len(net):
         score = np.average([n[at] for n in net[:set]])
         if score>=fall:
