@@ -15,11 +15,12 @@ To run this project, use conda package manager.
 To install conda, refer to: https://docs.conda.io/en/latest/miniconda.html
 
 Clone the epigame repository to your local machine.
-Open the Anaconda Prompt. Navigate to the epigame folder and set up the virtual environment:
+Open the Anaconda Prompt. For Windows, navigate to the epigame folder and set up the virtual environment:
 ```
 $ cd epigame
 $ conda create --name epigame --file environment.yml
 ```
+For Linux and Mac OS, install packages manually.
 
 ## Data preparation
 1. Extract the SEEG data of a single seizure as an EDF+ file. The recording should be 10 minutes long, ending at seizure end.
