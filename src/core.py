@@ -109,6 +109,7 @@ class RecordableGhost:
         with open(filename, 'rb') as file: return load(file)
     def save(data, filename):
         with open(filename, 'wb') as file: dump(data, file)
+        
 GRec = RecordableGhost
 
 class Record(GSet, GCo, GRec, GEq, GRe):
