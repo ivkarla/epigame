@@ -11,7 +11,7 @@ The project is created with:
 * Python version: 3.7.1
 	
 ## Setup
-To run this project, use conda package manager.
+Setup is customized for Windows. To run this project, use conda package manager.
 To install conda, refer to: https://docs.conda.io/en/latest/miniconda.html
 
 Clone the epigame repository to your local machine.
