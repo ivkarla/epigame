@@ -68,7 +68,7 @@ def check_until(net, set=1, fall=0, at=-1):
     When the score decreases the iteration stops.
 
     Args:
-        net (list): A list of sets returned by enlist().
+        net (list): A list of sets returned by evaluate_nodes().
         set (int): Defaults to 1.
         fall (int): Defaults to 0.
         at (int): Defaults to -1.
@@ -76,10 +76,14 @@ def check_until(net, set=1, fall=0, at=-1):
     Returns:
         int: Index of net list.
     """
+    print("Searching for the index of the last best network...")
     while set < len(net):
-        score = np.average([n[at] for n in net[:set]])
+        print("Net =", net[:set])
+        print("Score =", [n[at] for n in net[:set]][-1])
+        score = [n[at] for n in net[:set]][-1]
         if score>=fall:
             fall=score
             set+=1
         else: break
-    return set
+    print(f"Last best network at index {set-1}")
+    return set-1
