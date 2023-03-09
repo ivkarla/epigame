@@ -4,6 +4,7 @@ from numpy import correlate, average, array, angle, mean, sign, exp, zeros, abs,
 from src.awc import error
 from scipy.signal import hilbert, csd
 from src.data_legacy import butter_filter, notch, dwindle, upsample
+from joblib import Parallel, delayed
 
 def preprocess(eeg, epoch, limit=500): 
     """Primary preprocessing. Resamples data to a limit frequency and applies a notch filter.
@@ -89,7 +90,7 @@ def cross_correlation(signal1, signal2):
     """
     return correlate(signal1, signal2, mode="valid")
 
-def PAC(signal1, signal2, fs):
+def PAC(signal1, signal2, fs=500):
     """Computes low frequency phase-high frequency amplitude phase coupling between two signals.
     Low frequency = 1-4 Hz; High frequency = 30-70 Hz
     Args:
