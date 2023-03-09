@@ -111,6 +111,22 @@ def PAC(signal1, signal2, fs=500):
     plv = abs(mean(exp(complex(0,1)*phase_dif)))
     return plv
 
+def analyze_epoch(epoch, method, dtail, **opts):
+    mat = zeros((len(epoch),len(epoch)))                                    
+    nid, pairs = list(range(len(epoch))), []
+    for a in range(len(nid)):                             
+        if dtail:
+            for b in range(len(nid)): pairs.append((a,b))
+        else:
+            for b in range(a, len(nid)): pairs.append((a,b))                                       
+
+    parallelize = Parallel(n_jobs=-1)(delayed(method)(epoch[pair[0]], epoch[pair[1]], **opts) for pair in pairs)
+    conn_per_pair = [p for p in parallelize]
+
+    for pair_idx, pair in enumerate(pairs):                                                       
+        mat[pair[0],pair[1]] = conn_per_pair[pair_idx]
+    return mat
+
 def connectivity_analysis(epochs, method, dtail=False, **opts):
     """Computes a connectivity matrix N×N (N - number of nodes) per epoch, containing connectivity method measures for all node pairs.
 
@@ -123,25 +139,9 @@ def connectivity_analysis(epochs, method, dtail=False, **opts):
         list: List of connectivity matrices for all epochs.
     """
     print('Connectivity Analysis: '+str(method).split()[1])
-    result = [] 
-    for i,e in enumerate(epochs):    
-        mat = zeros((len(e),len(e)))                                    
-        nid, pairs = list(range(len(e))), []
-        for a in range(len(nid)):                             
-            if dtail:
-                for b in range(len(nid)): pairs.append((a,b))
-            else:
-                for b in range(a, len(nid)): pairs.append((a,b))                                       
-
-        parallelize = Parallel(n_jobs=-1)(delayed(method)(e[pair[0]], e[pair[1]], **opts) for pair in pairs)
-        conn_per_pair = [p for p in parallelize]
-
-        for i,pair in enumerate(pairs):                                                       
-            mat[pair[0],pair[1]] = conn_per_pair[i]
-
-        result.append(mat)     
-        print('{}: completed '.format(i), end='\n')                                                                                       
-    return result
+    parallelize = Parallel(n_jobs=-1)(delayed(analyze_epoch)(e, method, dtail, **opts) for e in epochs)
+    cm = [mat for mat in parallelize]
+    return cm
 
 def PEC(nse, n):
     """Computes prediction error connectivity.
