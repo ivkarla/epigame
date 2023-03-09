@@ -131,8 +131,13 @@ def connectivity_analysis(epochs, method, dtail=False, **opts):
                 for b in range(len(nid)): pairs.append((a,b))
             else:
                 for b in range(a, len(nid)): pairs.append((a,b))                                       
-        for pair in pairs:                                                       
-            mat[pair[0],pair[1]] = method(e[pair[0]], e[pair[1]], **opts)
+
+        parallelize = Parallel(n_jobs=-1)(delayed(method)(e[pair[0]], e[pair[1]], **opts) for pair in pairs)
+        conn_per_pair = [p for p in parallelize]
+
+        for i,pair in enumerate(pairs):                                                       
+            mat[pair[0],pair[1]] = conn_per_pair[i]
+
         result.append(mat)     
         print('{}: completed '.format(i), end='\n')                                                                                       
     return result
