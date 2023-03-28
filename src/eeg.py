@@ -100,7 +100,7 @@ class EEG(Table):
         with edf.EdfReader(name) as file:
             if bad is None: bad = EEG.BAD
             duration = EEG.secs(file.getFileDuration())
-            fs = file.getSampleFrequencies()[0]
+            fs = file.getSampleFrequency(0)
             if step is None: step = EEG.step(EEG.secs(0), duration)
             raw_notes = file.readAnnotations()
             notes = {note:[] for note in set(raw_notes[-1])}
@@ -108,8 +108,10 @@ class EEG(Table):
                 notes[note].append(EEG.secs(raw_notes[0][n]))
             labels = [correct_(label) for label in file.getSignalLabels()]
             labels = {label:n for n,label in enumerate(labels) if label not in bad}
+            signal=[]
+            for chn in range(len(labels)): signal.append(file.readSignal(chn))
             eeg.set(time=step.span(fs), region=tuple(labels))
-            eeg(file=name, duration=duration, fs=fs, notes=notes, labels=labels, epoch=step)
+            eeg(file=name, duration=duration, fs=fs, notes=notes, labels=labels, epoch=step, signal=signal)
             file.close()
         return eeg
     def remap(eeg, at=None, step=None):
