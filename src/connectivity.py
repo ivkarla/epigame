@@ -138,7 +138,7 @@ def connectivity_analysis(epochs, method, dtail=False, **opts):
     Returns:
         list: List of connectivity matrices for all epochs.
     """
-    print('Connectivity Analysis: '+str(method).split()[1])
+    print('Connectivity measure: '+str(method).split()[1])
     parallelize = Parallel(n_jobs=-1)(delayed(analyze_epoch)(e, method, dtail, **opts) for e in epochs)
     cm = [mat for mat in parallelize]
     return cm
