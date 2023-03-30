@@ -226,8 +226,7 @@ main_folder = "/home/kivi/gdrive/epigame-folder/"
 woi_code = {'2':"preseizure5", '3':"preseizure4", '4':"preseizure3", '5':"preseizure2", '6':"preseizure1", '7':"transition1", '8':"transition2", '9':"transition60"}
 wois = list(woi_code.keys())
 
-# subject_fs = {'VBM':250, 'JQN':500, 'BGL':500, 'HDW':500, 'ASJ':500, 'SDA':500, 'MGM':500, 'MSF':500, 'PTD':500, 'RGE':500, 'SRM':500, 'CRD':500, 'CRF':500, 'GTA':500, 'HAF':500, 'VML':1024, 'MRI':500, 'USA':512, 'BRM':512, 'MMM':2048, 'VCG':500}
-subject_fs = {'MMM':2048}
+subject_fs = {'VBM':250, 'JQN':500, 'BGL':500, 'HDW':500, 'ASJ':500, 'SDA':500, 'MGM':500, 'MSF':500, 'PTD':500, 'RGE':500, 'SRM':500, 'CRD':500, 'CRF':500, 'GTA':500, 'HAF':500, 'VML':1024, 'MRI':500, 'USA':512, 'BRM':512, 'MMM':2048, 'VCG':500}
 subject_acronyms = list(subject_fs.keys())
 subject_ids = {
 "ASJ":1,
@@ -321,7 +320,7 @@ for woi in wois:
             eeg_baseline._set(fs = subject_fs[sub])
 
             fs_min = min(eeg_seizure.fs, eeg_baseline.fs)
-            resampling = 512 if fs_min==512 else 500
+            resampling = 512 if fs_min in [512, 2048] else 500
 
             SET(eeg_seizure, _as='N')                      # N - baseline (non-seizure)
             SET(eeg_seizure, sz_start_note, 'W')            # W - WOI
