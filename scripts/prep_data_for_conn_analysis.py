@@ -299,18 +299,18 @@ for woi in wois:
 
             montage_overlap = list(set(nodes_seizure) & set(nodes_baseline))
 
-            extra_in_baseline = [ch for ch in nodes_baseline if ch not in montage_overlap]
-            extra_in_seizure = [ch for ch in nodes_seizure if ch not in montage_overlap]
+            extra_in_baseline = [nodes_baseline.index(ch) for ch in nodes_baseline if ch not in montage_overlap]
+            extra_in_seizure = [nodes_seizure.index(ch) for ch in nodes_seizure if ch not in montage_overlap]
 
             if not extra_in_baseline and not extra_in_seizure: print(f"\nEEG channels (nodes) match between the seizure and baseline recordings ({len(montage_overlap)} nodes).")
 
             if extra_in_baseline: 
                 print(f"\nExtra nodes in baseline recording ({len(nodes_baseline)} total): {extra_in_baseline}")
-                for chn in extra_in_baseline: eeg_baseline.axes.region.remove(chn)
+                for chn in extra_in_baseline: eeg_baseline.axes.region.remove(nodes_baseline[chn])
 
             if extra_in_seizure: 
                 print(f"\nExtra nodes in seizure recording ({len(nodes_seizure)} total): {extra_in_seizure}")
-                for chn in extra_in_seizure: eeg_seizure.axes.region.remove(chn)
+                for chn in extra_in_seizure: eeg_seizure.axes.region.remove(nodes_seizure[chn])
 
             print(f"Number of common nodes = {len(montage_overlap)}")
 
