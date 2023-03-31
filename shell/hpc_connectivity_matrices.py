@@ -781,6 +781,20 @@ def exclude_node_from_cm(cm_list, channel_id):
       reduced_cms.append(cm)
     return reduced_cms
 
+import time
+
+_start_time = time.time()
+
+def timer_start():
+    global _start_time 
+    _start_time = time.time()
+
+def timer_end():
+    t_sec = round(time.time() - _start_time)
+    (t_min, t_sec) = divmod(t_sec,60)
+    (t_hour,t_min) = divmod(t_min,60) 
+    print('Time passed: {}hour:{}min:{}sec'.format(t_hour,t_min,t_sec))
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------
 
 from sys import argv
@@ -832,44 +846,48 @@ resampling = 512 if subject_fs[subject_id] in [512, 2048] else 500
 connectivity_measures = ["PAC"] if bands is None else ["SCR", "SCI" "PLV", "PLI", "CC"]  
 
 for measure in connectivity_measures:
-        
-        prep_data = REc.load(file_path).data
-        epochs = prep_data.x_prep
 
-        cm = struct(x=prep_data.x, y=prep_data.y, i=prep_data.i, nodes=prep_data.nodes)
+    timer_start()
+    print(measure)
+    
+    prep_data = REc.load(file_path).data
+    epochs = prep_data.x_prep
 
-        if measure == "SCR":
-            cm._set(X = connectivity_analysis(epochs, spectral_coherence, fs=resampling, imag=False))
+    cm = struct(x=prep_data.x, y=prep_data.y, i=prep_data.i, nodes=prep_data.nodes)
 
-        elif measure == "SCI":
-            cm._set(X = connectivity_analysis(epochs, spectral_coherence, fs=resampling, imag=True))
+    if measure == "SCR":
+        cm._set(X = connectivity_analysis(epochs, spectral_coherence, fs=resampling, imag=False))
 
-        elif measure == "PEC": 
-            parallelize = Parallel(n_jobs=-1)(delayed(PEC)(ep,i+1) for i,ep in enumerate(epochs))
-            cm_pec = [p for p in parallelize]
-            cm._set(X = cm_pec)
+    elif measure == "SCI":
+        cm._set(X = connectivity_analysis(epochs, spectral_coherence, fs=resampling, imag=True))
 
-        elif measure in "PLV":
-            cm._set(X = connectivity_analysis(epochs, phaselock))
+    elif measure == "PEC": 
+        parallelize = Parallel(n_jobs=-1)(delayed(PEC)(ep,i+1) for i,ep in enumerate(epochs))
+        cm_pec = [p for p in parallelize]
+        cm._set(X = cm_pec)
 
-        elif measure == "PLI":
-            cm._set(X = connectivity_analysis(epochs, phaselag))
+    elif measure in "PLV":
+        cm._set(X = connectivity_analysis(epochs, phaselock))
 
-        elif measure == "CC":
-            cm._set(X = connectivity_analysis(epochs, cross_correlation))
+    elif measure == "PLI":
+        cm._set(X = connectivity_analysis(epochs, phaselag))
 
-        elif measure == "PAC":
-            cm._set(X = connectivity_analysis(epochs, PAC, fs=resampling))
+    elif measure == "CC":
+        cm._set(X = connectivity_analysis(epochs, cross_correlation))
 
-        reduced_sz_cms, reduced_base_cms = [],[]
+    elif measure == "PAC":
+        cm._set(X = connectivity_analysis(epochs, PAC, fs=resampling))
 
-        for m in cm.extra_nodes_1: reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], m)
-        for m in cm.extra_nodes_0: reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], m)
+    reduced_sz_cms, reduced_base_cms = [],[]
 
-        cm.X = reduced_sz_cms+reduced_base_cms
+    for m in prep_data.extra_nodes_1: reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], m)
+    for m in prep_data.extra_nodes_0: reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], m)
 
-        path_cm = main_folder + "connectivity_matrices/"
-        makedirs(path_cm, exist_ok=True)
+    cm.X = reduced_sz_cms+reduced_base_cms
 
-        if bands is not None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}-{bands}.prep") 
-        elif bands is None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}.prep")
+    path_cm = main_folder + "connectivity_matrices/"
+
+    if bands is not None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}-{bands}.prep") 
+    elif bands is None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}.prep")
+
+    timer_end()
