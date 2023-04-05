@@ -868,7 +868,7 @@ subject_fs = {
 
 resampling = 512 if subject_fs[subject_id] in [512, 2048] else 500
 
-connectivity_measures = ["PAC"] if bands is None else ["SCR", "SCI" "PLV", "PLI", "CC"]  
+connectivity_measures = ["PAC", "PEC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"]  
 
 for measure in connectivity_measures:
 
@@ -905,12 +905,18 @@ for measure in connectivity_measures:
 
     reduced_sz_cms, reduced_base_cms = [],[]
 
-    for m in prep_data.extra_nodes_1: reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], nodes[subject_id].index(m))
-    for m in prep_data.extra_nodes_0: reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], nodes[subject_id].index(m))
+    for m in prep_data.extra_nodes_1:
+        if isinstance(m, str): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], nodes[subject_id].index(m))
+        elif isinstance(m, int): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], m)
+    
+    for m in prep_data.extra_nodes_0:
+        if isinstance(m, str): reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], nodes[subject_id].index(m))
+        elif isinstance(m, int): reduced_sz_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], m)
 
     cm.X = reduced_sz_cms+reduced_base_cms
 
-    path_cm = main_folder + "connectivity_matrices/"
+    path_cm = main_folder + "/connectivity_matrices/"
+    makedirs(main_folder + "/connectivity_matrices/", exist_ok=True)
 
     if bands is not None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}-{bands}.prep") 
     elif bands is None: REc(cm).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}.prep")
