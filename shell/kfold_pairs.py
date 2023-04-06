@@ -582,43 +582,44 @@ from os import getcwd, makedirs
 
 main_folder = getcwd()
 
-file_path = argv[1]
-print(file_path)
+subject_id = argv[1]
+print(f"Subject ID: {subject_id}")
 
-woi_code = {'1':"baseline", '2':"preseizure5", '3':"preseizure4", '4':"preseizure3", '5':"preseizure2", '6':"preseizure1", '7':"transition1", '8':"transition2", '9':"transition60", '10':"seizure"}
-woi_code_inv = dict((v,k) for k, v in woi_code.items())
+woi = argv[2]
+print(f"WOI: {woi}")
 
 from itertools import combinations
 from joblib import Parallel, delayed
 
-print("File:", file_path)
+for bands in [None,(0,4),(4,8),(8,13),(13,30),(30,70),(70,150)]:
 
-filename = file_path.split("/")[-1]
-subject_id = filename.split("-")[0]
-woi = woi_code_inv[filename.split("-")[1]]
-measure = filename.split("-")[2] if len(filename.split("-"))==4 else filename.split("-")[-1].split(".")[0]
-bands = filename.split("-")[-1].split(".")[0] if len(filename.split("-"))==4 else None
+    connectivity_measures = ["PAC", "PEC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"] 
 
-print("Connectivity matrices of", subject_id)
+    for measure in connectivity_measures:
+        
+        ext = "" if bands is None else f"-{bands}"
+        file_path = main_folder + "/connectivity_matrices" + f"/{subject_id}-{woi}-{measure}{ext}.prep"
+        print("File:", file_path)
+ 
+        timer_start()
 
-timer_start()
+        cm = REc.load(file_path).data
 
-cm = REc.load(file_path).data
+        nodes = cm.nodes
+        node_ids = list(range(len(nodes))) 
 
-nodes = cm.nodes
-node_ids = list(range(len(nodes))) 
+        node_pairs = combinations(node_ids, 2)
 
-node_pairs = combinations(node_ids, 2)
+        parallelize = Parallel(n_jobs=-1)(delayed(evaluate_nodes)(pair, nodes, classify_epochs(cm, pair)) for pair in node_pairs)
+        base = [p for p in parallelize]
 
-parallelize = Parallel(n_jobs=-1)(delayed(evaluate_nodes)(pair, nodes, classify_epochs(cm, pair)) for pair in node_pairs)
-base = [p for p in parallelize]
+        path_res = main_folder + "/result/"
+        makedirs(main_folder + "/result/", exist_ok=True)
 
-path_res = main_folder + "/result/"
-makedirs(main_folder + "/result/", exist_ok=True)
+        result = REc(struct(nodes=nodes, pairs=base))
+        print(result)
+        
+        if bands is not None: REc(result).save(path_res + f"{subject_id}-{woi}-{measure}-{bands}.res") 
+        elif bands is None: REc(result).save(path_res + f"{subject_id}-{woi}-{measure}.res")
 
-result = REc(struct(nodes=nodes, pairs=base))
-if bands is not None: REc(result).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}-{bands}.res") 
-elif bands is None: REc(result).save(path_cm + f"{subject_id}-{woi_code[woi]}-{measure}.res")
-
-timer_end()
-
+        timer_end()
