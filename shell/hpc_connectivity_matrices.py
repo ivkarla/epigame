@@ -878,7 +878,7 @@ for measure in connectivity_measures:
     prep_data = REc.load(file_path).data
     epochs = prep_data.x_prep
 
-    cm = struct(x=prep_data.x, y=prep_data.y, i=prep_data.i, nodes=prep_data.nodes)
+    cm = struct(y=prep_data.y, i=prep_data.i, nodes=prep_data.nodes)
 
     if measure == "SCR":
         cm._set(X = connectivity_analysis(epochs, spectral_coherence, fs=resampling, imag=False))
@@ -905,16 +905,29 @@ for measure in connectivity_measures:
 
     reduced_sz_cms, reduced_base_cms = [],[]
 
-    for m in prep_data.extra_nodes_1:
-        if isinstance(m, str): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], nodes[subject_id].index(m))
-        elif isinstance(m, int): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], m)
+    if prep_data.extra_nodes_1:
+
+        extra_nodes_sz = sorted([nodes[subject_id].index(label) for label in prep_data.extra_nodes_1], reverse=True) if isinstance(prep_data.extra_nodes_1[0], str) else sorted(prep_data.extra_nodes_1, reverse=True)
+
+        for m in extra_nodes_sz:
+            if isinstance(m, str): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], nodes[subject_id].index(m))
+            elif isinstance(m, int): reduced_sz_cms = exclude_node_from_cm(cm.X[0:int(len(cm.X)/2)], m)
+
+        cm.X = reduced_sz_cms+cm.X[int(len(cm.X)/2)::]
+
+    if prep_data.extra_nodes_0:
+
+        extra_nodes_base = sorted([nodes[subject_id].index(label) for label in prep_data.extra_nodes_0], reverse=True) if isinstance(prep_data.extra_nodes_0[0], str) else sorted(prep_data.extra_nodes_0, reverse=True)
+
+        for m in extra_nodes_base:
+            if isinstance(m, str): reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], nodes[subject_id].index(m))
+            elif isinstance(m, int): reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], m)
+
+        cm.X = cm.X[0:int(len(cm.X)/2)]+reduced_base_cms
     
-    for m in prep_data.extra_nodes_0:
-        if isinstance(m, str): reduced_base_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], nodes[subject_id].index(m))
-        elif isinstance(m, int): reduced_sz_cms = exclude_node_from_cm(cm.X[int(len(cm.X)/2)::], m)
-
-    cm.X = reduced_sz_cms+reduced_base_cms
-
+    print(f"Seizure epoch (shape {cm.X[0].shape}): {cm.X[0]}")
+    print(f"Baseline epoch (shape {cm.X[-1].shape}): {cm.X[-1]}")
+    
     path_cm = main_folder + "/connectivity_matrices/"
     makedirs(main_folder + "/connectivity_matrices/", exist_ok=True)
 
