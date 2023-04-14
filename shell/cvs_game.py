@@ -81,7 +81,7 @@ RESECTION = {1: ['T1-T2', 'A3-A4', 'T7-T8', 'B5-B6', 'D4-D5', 'B2-B3', 'T2-T3', 
 import pandas as pd
 from sys import argv
 from os import getcwd, makedirs
-from pickle import load, dump
+from pickle import dump
 from scipy.interpolate import interp1d
 
 main_folder = getcwd()
@@ -126,7 +126,7 @@ for node_pair in players:
 
         player_deck[node_pair]+=cards
 
-dump(open(main_folder + path_deck + f"player_deck_preseizure1_sub{sub}.p", "wb"))
+dump(open(path_deck + f"player_deck_{woi}_sub{sub}.p", "wb"))
 
 strategies = [mm_choice, mx_choice, av_choice, rn_choice]
 strategy_ext = ["mm", "mx", "av", "rn"]
@@ -165,7 +165,7 @@ for i,strategy in enumerate(strategies):
         for name,score in scores[fall:]: test[name].append(0)
 
     sorted_players = {(int(k[1:-1].split(", ")[0]),int(k[1:-1].split(",")[1])):v for k, v in sorted(test.items(), key=lambda item: sum(item[1]), reverse=True)}
-    dump(sorted_players, open(main_folder + path_scores + f"scores_{strategy_ext[i]}_{n_cards}cards_{rounds}rounds_{turns}turns_preseizure1_sub{sub}.p", "wb"))
+    dump(sorted_players, open(path_scores + f"scores_{strategy_ext[i]}_{n_cards}cards_{rounds}rounds_{turns}turns_preseizure1_sub{sub}.p", "wb"))
     
     nonresection_score, resection_score = 0,0
     for k,v in sorted_players.items():
