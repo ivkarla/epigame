@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J SVMp
+#SBATCH -J EPIG
 #SBATCH -p short
 #SBATCH -N 2
 #SBATCH -n 8
@@ -11,4 +11,4 @@
 #SBATCH -o %N.%J.out #STDOUT
 #SBATCH -e %N.%J.err #STDERR
 
-python /homedtic/rzucca/epigame/code/kfold_pairs.py ${SLURM_ARRAY_TASK_ID} "preseizure1"
+python /homedtic/rzucca/epigame/code/cvs_game.py ${SLURM_ARRAY_TASK_ID} "preseizure1"
