@@ -82,12 +82,13 @@ import pandas as pd
 from sys import argv
 from os import getcwd, makedirs
 from pickle import dump
+from joblib import Parallel, delayed
 from scipy.interpolate import interp1d
 
 main_folder = getcwd()
-path_res = main_folder + "result/"
-path_deck = main_folder + "decks/"
-path_scores = main_folder + "/game_scores"
+path_res = main_folder + "/result/"
+path_deck = main_folder + "/decks/"
+path_scores = main_folder + "/game_scores/"
 
 makedirs(path_deck, exist_ok=True)
 makedirs(path_scores, exist_ok=True)
@@ -105,26 +106,31 @@ table_1 = df.groupby("Subject").get_group(sub) # table is a subject
 conn_measures = list(set(table_1.CM))
 players = list(set(table_1.Pair))
 
+def create_deck(node_pair, connectivity):
+
+    cvs = table_1.groupby("Pair").get_group(node_pair).groupby("CM").get_group(connectivity).reset_index().CVS[0]
+
+    ones = cvs.count("1.")
+    cvs = cvs.replace("1.","")
+
+    a = [x for y in [c.split("0") for c in cvs[1:-1].replace(" ","").split("\n")] for x in y]
+    cards=[1.0 for i in range(ones)]
+    for s in a:
+        if s=="": pass
+        elif s[-2::]=="1.": cards.append(float("0"+s[:-2])); cards.append(float(s[-2::]))
+        else: cards.append(float("0"+s))
+
+    return cards
+
 game = []
 player_deck = {pair:[] for pair in players}
 
 for node_pair in players:
 
-    for connectivity in conn_measures:
+    parallelize = Parallel(n_jobs=-1)(delayed(create_deck)(node_pair,connectivity)for connectivity in conn_measures)
+    base = [p for p in parallelize]
 
-        cvs = table_1.groupby("Pair").get_group(node_pair).groupby("CM").get_group(connectivity).reset_index().CVS[0]
-
-        ones = cvs.count("1.")
-        cvs = cvs.replace("1.","")
-
-        a = [x for y in [c.split("0") for c in cvs[1:-1].replace(" ","").split("\n")] for x in y]
-        cards=[1.0 for i in range(ones)]
-        for s in a:
-            if s=="": pass
-            elif s[-2::]=="1.": cards.append(float("0"+s[:-2])); cards.append(float(s[-2::]))
-            else: cards.append(float("0"+s))
-
-        player_deck[node_pair]+=cards
+    player_deck[node_pair] = [item for sublist in base for item in sublist]
 
 dump(open(path_deck + f"player_deck_{woi}_sub{sub}.p", "wb"))
 
