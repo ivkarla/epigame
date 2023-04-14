@@ -195,7 +195,7 @@ from sys import argv
 from os import getcwd
 
 main_folder = getcwd()
-path_res = main_folder + "result/"
+path_res = main_folder + "/result/"
 
 woi = argv[1]
 subjects = [id for id in range(1,22)]
