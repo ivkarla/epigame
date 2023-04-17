@@ -142,9 +142,9 @@ remap = interp1d([0,1],[1,100])
 deck_remapped = {node_pair:[float(remap(val)) for val in player_deck[node_pair]] for node_pair in player_deck}
 
 nodes = NODES[str(sub)]
-resection = RESECTION[str(sub)]
+resection = RESECTION[int(sub)]
 
-Strategy_resection_score, Strategy_nonresection_score = [],[],[],[]
+Strategy_resection_score, Strategy_nonresection_score = [],[]
 
 for i,strategy in enumerate(strategies):
     
@@ -175,9 +175,9 @@ for i,strategy in enumerate(strategies):
     
     nonresection_score, resection_score = 0,0
     for k,v in sorted_players.items():
-        if k[0] in resection or k[1] in resection:
+        if nodes[k[0]] in resection or nodes[k[1]] in resection:
             resection_score += sum(v)
-        if k[0] not in resection or k[1] not in resection:
+        if nodes[k[0]] not in resection or nodes[k[1]] not in resection:
             nonresection_score += sum(v)
 
     print("Resection score:", resection_score/len(resection))
