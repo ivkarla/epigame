@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J EPIG
-#SBATCH -p middle
+#SBATCH -p medium
 #SBATCH -N 2
 #SBATCH -n 8
 #SBATCH --chdir=/homedtic/rzucca/epigame
