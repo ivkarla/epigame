@@ -84,7 +84,7 @@ from os import makedirs, getcwd
 from scipy.interpolate import interp1d
 from sys import argv
 
-main_folder = getcwd()
+main_folder = getcwd() + "/"
 
 path_res = main_folder + "result/"
 
@@ -94,8 +94,8 @@ path_scores = main_folder + "game_scores/"
 makedirs(path_deck, exist_ok=True)
 makedirs(path_scores, exist_ok=True)
 
-sub = argv[0]
-woi = argv[1]
+sub = argv[1]
+woi = argv[2]
 
 rounds, turns, n_cards = 100, 10, 24
 
@@ -109,7 +109,7 @@ resection = RESECTION[int(sub)]
 nonresection = [n for n in nodes if n not in resection]
 
 df = pd.read_csv(main_folder + f"cvs_pairs_{woi}.csv")
-table_1 = df.groupby("Subject").get_group(sub) # table is a subject
+table_1 = df.groupby("Subject").get_group(int(sub)) # table is a subject
 conn_measures = list(set(table_1.CM))
 players = list(set(table_1.Pair))
 
