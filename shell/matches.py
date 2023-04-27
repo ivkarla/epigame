@@ -120,7 +120,7 @@ for cm in conn_measures:
     
     for node_pair in players:
 
-        cvs = table_1.groupby("Pair").get_group(node_pair).groupby("CM").get_group(connectivity).reset_index().CVS[0]
+        cvs = table_1.groupby("Pair").get_group(node_pair).groupby("CM").get_group(cm).reset_index().CVS[0]
         ones = cvs.count("1.")
         cvs = cvs.replace("1.","")
         a = [x for y in [c.split("0") for c in cvs[1:-1].replace(" ","").split("\n")] for x in y]
