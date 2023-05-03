@@ -805,7 +805,11 @@ main_folder = getcwd()
 file_path = argv[1]
 print(file_path)
 
-woi_code = {'1':"baseline", '2':"preseizure5", '3':"preseizure4", '4':"preseizure3", '5':"preseizure2", '6':"preseizure1", '7':"transition1", '8':"transition2", '9':"transition60", '10':"seizure"}
+woi_code = {'1':"baseline", '2':"preseizure5", '3':"preseizure4",
+            '4':"preseizure3", '5':"preseizure2", '6':"preseizure1",
+            '7':"transition1", '8':"transition2", '9':"transition60",
+            '10':"seizure", '11':"seizure1"
+            }
 woi_code_inv = dict((v,k) for k, v in woi_code.items())
 
 filename = file_path.split("/")[-1]
@@ -868,7 +872,7 @@ subject_fs = {
 
 resampling = 512 if subject_fs[subject_id] in [512, 2048] else 500
 
-connectivity_measures = ["PAC", "PEC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"]  
+connectivity_measures = ["PAC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"]  
 
 for measure in connectivity_measures:
 
