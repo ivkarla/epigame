@@ -790,7 +790,7 @@ main_folder = getcwd()
 file_path = argv[1]
 print(file_path)
 
-bands = argv[2]
+bands = argv[2] if len(argv) > 2 else None
 
 filename = file_path.split("/")[-1]
 subject_id = filename.split(".")[0]
