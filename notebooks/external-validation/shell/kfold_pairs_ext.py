@@ -590,7 +590,7 @@ print(f"Subject ID: {subject_id}")
 from itertools import combinations
 from joblib import Parallel, delayed
 
-bands = argv[2]
+bands = argv[2] if len(argv) > 2 else None
 
 # for bands in [None,(0,4),(4,8),(8,13),(13,30),(30,70),(70,150)]:
 
