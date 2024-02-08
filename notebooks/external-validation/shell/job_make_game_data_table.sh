@@ -19,4 +19,4 @@ source /opt/venv/bin/activate
 echo "Python Version: $(python --version)"
 
 # Run the Python script within the virtual environment
-singularity exec epigame.sif /opt/venv/bin/python /homes/users/kivankovic/ext-val/scripts/make_game_data_table_ext.py "(1,4)"
+singularity exec epigame.sif /opt/venv/bin/python /homes/users/kivankovic/ext-val/scripts/make_game_data_table_ext.py
