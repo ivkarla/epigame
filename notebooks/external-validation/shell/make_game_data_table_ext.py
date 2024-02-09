@@ -201,29 +201,32 @@ subjects = [id for id in range(1,29)]
 
 Subject, Pair, Labels, CM, CVS = [],[],[],[],[]
 
-connectivity_measures = ["PAC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"]
+for bands in [None,(1,4),(4,8),(8,13),(13,30),(30,70),(70,150)]:
 
-for bands in [None,(0,4),(4,8),(8,13),(13,30),(30,70),(70,150)]:
-
+    connectivity_measures = ["PAC"] if bands is None else ["SCR", "SCI", "PLV", "PLI", "CC"]
     for measure in connectivity_measures:
         
         for subject_id in subjects:
-
-            ext = "" if bands is None else f"-{bands}".replace(" ","")
-
-            if bands is not None: filename = path_res + f"{subject_id}-{measure}-{bands}.res".replace(" ","")
-            elif bands is None: filename = path_res + f"{subject_id}-{measure}.res"
-            print(filename)
-
-            res = REc.load(filename).data.data.pairs
             
-            for pair_tuple in res:
+            # control for subject 16, for which 70,150 SCR and SCI didn't work
+            if subject_id==16 and bands==(70,150): pass
+            else:
+
+                ext = "" if bands is None else f"-{bands}".replace(" ","")
+
+                if bands is not None: filename = path_res + f"{subject_id}-{measure}-{bands}.res".replace(" ","")
+                elif bands is None: filename = path_res + f"{subject_id}-{measure}.res"
+                print(filename)
+
+                res = REc.load(filename).data.data.pairs
                 
-                Subject.append(subject_id)   # e.g., 1
-                Pair.append(pair_tuple[0])   # e.g., (0,1)
-                Labels.append(pair_tuple[1]) # e.g., 'Q9-Q10<->U2-U3'
-                CM.append(measure+ext)       # e.g., 'CC-(0,4)'
-                CVS.append(pair_tuple[2])    # 1-D array
+                for pair_tuple in res:
+                    
+                    Subject.append(subject_id)   # e.g., 1
+                    Pair.append(pair_tuple[0])   # e.g., (0,1)
+                    Labels.append(pair_tuple[1]) # e.g., 'Q9-Q10<->U2-U3'
+                    CM.append(measure+ext)       # e.g., 'CC-(0,4)'
+                    CVS.append(pair_tuple[2])    # 1-D array
 
 df = pd.DataFrame({"Subject":Subject, "Pair":Pair, "Labels":Labels, "CM":CM, "CVS":CVS})
 
