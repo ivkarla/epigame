@@ -38,8 +38,9 @@ from os import getcwd
 
 woi = argv[1]
 main_folder = getcwd() + f"/12cards/{woi}/"
+main_folder = "/home/kivi/gdrive/epigame-folder/" + f"{woi}/"
 
-ext = ""
+ext = "2"
 
 def to_labels(pos_probs, threshold):
     # function to map all values >=threshold to 1 and all values <threshold to 0
@@ -47,7 +48,7 @@ def to_labels(pos_probs, threshold):
 	return list((pos_probs >= threshold).astype('int')) 
 
 
-def moving_thresh_auc(predictive_measure=[], outcome=[], moving_step=0.00001):
+def moving_thresh_auc(predictive_measure=[], outcome=[], n_good=14, n_bad=7, moving_step=0.00001):
     # returns AUC, best threshold, true negatives and true positives at the best threshold
 
     thresholds = np.arange(0, np.max(predictive_measure), moving_step)
@@ -61,8 +62,8 @@ def moving_thresh_auc(predictive_measure=[], outcome=[], moving_step=0.00001):
     step = 0
     for t in thresholds:    
         g_l, b_l = to_labels(g, t), to_labels(b, t)
-        tp = sum(g_l)/14 
-        tn = b_l.count(0)/7
+        tp = sum(g_l)/n_good 
+        tn = b_l.count(0)/n_bad
         A = (tp + tn)/2
         if A>A_top: 
             step=0
@@ -86,7 +87,7 @@ for sigmas in [2,3,4]:
 
     load_data["Mean_overlap_ratio"].fillna(0, inplace=True) # if 0 winners, nan is saved, so replace it with 0
 
-    for cm in combinations(conn_measures, 3): # combinations of scores based on different connectivity measures
+    for cm in combinations(conn_measures, 2): # combinations of scores based on different connectivity measures
         cm1,cm2 = cm[0],cm[1]
         print(cm1,cm2)
 
@@ -104,8 +105,8 @@ for sigmas in [2,3,4]:
             # calculate moving threshold-based AUC
             mauc = moving_thresh_auc(x_plot, y_plot, moving_step=0.00001)
 
-            group1 = [x for i,x in enumerate(x_plot) if y_plot[i]==1]
-            group0 = [x for i,x in enumerate(x_plot) if y_plot[i]==0]
+            group1 = [x for i,x in enumerate(x_plot) if y_plot[i]=="good"]
+            group0 = [x for i,x in enumerate(x_plot) if y_plot[i]=="bad"]
 
             gaussian, stest = False, ''
             stat1, p1 = shapiro(group1)
@@ -131,5 +132,5 @@ outcome_combs = pd.DataFrame({"CM":CM, "Strategy":Strategy, "Sigmas":Sigmas,
                                      "Gauss":Gauss, "Pvalue-Shapiro":Pvalue_Shapiro,
                                      "Test":Test, "Pvalue":Pvalue,
                                      "MAUC":MAUC, "T":T, "TN":TN, "TP":TP})
-outcome_combs.to_excel(main_folder+f"surgical_outcome_prediction_combinations3.xlsx")
+outcome_combs.to_excel(main_folder+f"surgical_outcome_prediction_combinations{ext}.xlsx")
 pass

@@ -158,19 +158,3 @@ for cm in conn_measures:
 
         sorted_players = {(int(k[1:-1].split(", ")[0]),int(k[1:-1].split(",")[1])):v for k, v in sorted(test.items(), key=lambda item: sum(item[1]), reverse=True)}
         dump(sorted_players, open(path_scores + f"scores_{cm}_{strategy_ext[i]}_{n_cards}cards_{rounds}rounds_{turns}turns_{woi}_sub{sub}.p", "wb"))
-
-        print("N_nodes =", len(nodes), ";N_resection =", len(resection))
-        print("\nStrategy:")
-        print(strategy_ext[i].upper())
-        
-        nonresection_score, resection_score = 0,0
-
-        for k,v in sorted_players.items():
-            if (nodes[k[0]] in resection and nodes[k[1]] in resection): resection_score += sum(v)
-            elif (nodes[k[0]] in nonresection and nodes[k[1]] in nonresection): nonresection_score += sum(v)
-            elif (nodes[k[0]] in nonresection and nodes[k[1]] in resection) or (nodes[k[0]] in resection and nodes[k[1]] in nonresection): resection_score += sum(v);nonresection_score += sum(v)
-
-        print("Resection score (N_wins):", resection_score)
-        print("Non-resection score (N_wins):", nonresection_score)
-        print("Resection score (N_wins%N_nodes_res):", resection_score/len(resection))
-        print("Non-resection score (N_wins%N_nodes_nonresectiones):", nonresection_score/(len(nodes)-len(resection)))

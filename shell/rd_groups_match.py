@@ -45,7 +45,7 @@ sigmas = int(argv[2])
 
 main_folder = getcwd() + "/"
 
-path_res = main_folder + f"{woi}/"
+path_res = main_folder 
 
 path_deck = main_folder + "decks/"
 path_scores = main_folder + "game_scores/"

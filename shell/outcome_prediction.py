@@ -47,7 +47,7 @@ def to_labels(pos_probs, threshold):
 	return list((pos_probs >= threshold).astype('int')) 
 
 
-def moving_thresh_auc(predictive_measure=[], outcome=[], moving_step=0.00001):
+def moving_thresh_auc(predictive_measure=[], outcome=[], n_good=14, n_bad=7, moving_step=0.00001):
     # returns AUC, best threshold, true negatives and true positives at the best threshold
 
     thresholds = np.arange(0, np.max(predictive_measure), moving_step)
@@ -61,8 +61,8 @@ def moving_thresh_auc(predictive_measure=[], outcome=[], moving_step=0.00001):
     step = 0
     for t in thresholds:    
         g_l, b_l = to_labels(g, t), to_labels(b, t)
-        tp = sum(g_l)/14 
-        tn = b_l.count(0)/7
+        tp = sum(g_l)/n_good 
+        tn = b_l.count(0)/n_bad
         A = (tp + tn)/2
         if A>A_top: 
             step=0

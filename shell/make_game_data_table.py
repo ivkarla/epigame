@@ -228,4 +228,4 @@ for bands in [None,(0,4),(4,8),(8,13),(13,30),(30,70),(70,150)]:
 
 df = pd.DataFrame({"Subject":Subject, "Pair":Pair, "Labels":Labels, "CM":CM, "CVS":CVS})
 
-df.to_csv(main_folder + f"cvs_pairs_{woi}.csv")
+df.to_csv(main_folder + f"/cvs_pairs_{woi}.csv")
